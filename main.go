@@ -1,16 +1,18 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/matthewhartstonge/argon2"
 )
 
 type DataResponse struct {
 	ID       int    `json:"id"`
 	Email    string `json:"email" form:"email" binding:"required,email"`
-	Password string `json:"password" form:"password" binding:"required"`
+	Password string `json:"password,omitempty" form:"password" binding:"required"`
 }
 
 type Response struct {
@@ -25,7 +27,10 @@ type Response struct {
 var users []DataResponse
 var lastID int
 
+// format argon2
+// $jenisKey$versiKey$konfigurasi(memory, time, parallelism)$salt$hash
 func main() {
+	argon := argon2.DefaultConfig()
 	r := gin.Default()
 
 	// get all user
@@ -225,9 +230,23 @@ func main() {
 				return
 			}
 		}
+		// hashed password
+		encoded, err := argon.HashEncoded([]byte(data.Password))
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, Response{
+				Success: false,
+				Message: "failed to hash password",
+				Error:   err.Error(),
+			})
+			return
+		}
+
+		// masukin hashpassword ke variable
+		data.Password = string(encoded)
 		lastID++
 		data.ID = lastID
 		users = append(users, data)
+		fmt.Println(data.Password)
 		ctx.JSON(http.StatusCreated, Response{
 			Success: true,
 			Message: "success register account",
@@ -248,20 +267,35 @@ func main() {
 		}
 
 		for _, u := range users {
-			if u.Email == data.Email && u.Password == data.Password {
+			// cek email sama gak antara di tempat simpan dengan yang di input user
+			if u.Email == data.Email {
+				// bandingkan hash dari user dengan hash dari tempat penyimpanan :)
+				ok, err := argon2.VerifyEncoded(
+					[]byte(data.Password),
+					[]byte(u.Password),
+				)
+				if err != nil || !ok {
+					ctx.JSON(http.StatusUnauthorized, Response{
+						Success: false,
+						Message: "login failed",
+						Error:   "email or password incorrect",
+					})
+					return
+				}
+
 				ctx.JSON(http.StatusOK, Response{
 					Success: true,
 					Message: "login success",
+					Data: []DataResponse{
+						{
+							ID:    u.ID,
+							Email: u.Email,
+						},
+					},
 				})
 				return
 			}
 		}
-
-		ctx.JSON(http.StatusUnauthorized, Response{
-			Success: false,
-			Message: "login failed",
-			Error:   "email or password incorrect",
-		})
 	})
 
 	r.Run("localhost:8888")
