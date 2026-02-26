@@ -28,6 +28,7 @@ var lastID int
 func main() {
 	r := gin.Default()
 
+	// get all user
 	r.GET("/users", func(ctx *gin.Context) {
 		if len(users) == 0 {
 			ctx.JSON(http.StatusNotFound, Response{
@@ -44,7 +45,39 @@ func main() {
 			Data:    users,
 		})
 	})
+	// detail user
+	r.GET("/users/:id", func(ctx *gin.Context) {
+		idParam := ctx.Param("id")
 
+		id, err := strconv.Atoi(idParam)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, Response{
+				Success: false,
+				Message: "invalid id",
+				Error:   err.Error(),
+			})
+			return
+		}
+
+		for _, u := range users {
+			if u.ID == id {
+				ctx.JSON(http.StatusOK, Response{
+					Success: true,
+					Message: "user found",
+					Data:    []DataResponse{u},
+				})
+				return
+			}
+		}
+
+		ctx.JSON(http.StatusNotFound, Response{
+			Success: false,
+			Message: "user not found",
+			Error:   "id does not exist",
+		})
+	})
+
+	// add user
 	r.POST("/users", func(ctx *gin.Context) {
 		var data DataResponse
 
@@ -78,6 +111,7 @@ func main() {
 		})
 	})
 
+	// edit user
 	r.PATCH("/users/:id", func(ctx *gin.Context) {
 		idParam := ctx.Param("id")
 
@@ -136,14 +170,15 @@ func main() {
 		})
 	})
 
+	// delete user
 	r.DELETE("/users/:id", func(ctx *gin.Context) {
 		idParam := ctx.Param("id")
-
+		id, _ := strconv.Atoi(idParam)
 		var result []DataResponse
 		found := false
 
 		for _, v := range users {
-			if strconv.Itoa(v.ID) == idParam {
+			if v.ID == id {
 				found = true
 				continue
 			}
