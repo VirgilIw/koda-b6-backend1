@@ -15,25 +15,58 @@ type DataResponse struct {
 	Password string `json:"password,omitempty" form:"password" binding:"required"`
 }
 
+type DataResponse struct {
+	Id       int    `json:"id"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
 type Response struct {
 	Success bool           `json:"success"`
 	Message string         `json:"message"`
 	Error   string         `json:"error,omitempty"`
-	Data    []DataResponse `json:"data,omitempty"`
+	Data    []DataResponse `json:"results,omitempty"`
 }
 
-// omitempty = field kosong, jangan tampilkan di JSON response.
-
 var users []DataResponse
-var lastID int
+var id int
 
-// format argon2
-// $jenisKey$versiKey$konfigurasi(memory, time, parallelism)$salt$hash
 func main() {
-	argon := argon2.DefaultConfig()
 	r := gin.Default()
 
-	// get all user
+	r.POST("/users", func(ctx *gin.Context) {
+
+		var data DataResponse
+
+		if err := ctx.ShouldBindJSON(&data); err != nil {
+			ctx.JSON(http.StatusInternalServerError, Response{
+				Success: false,
+				Message: "internal server error",
+				Error:   "server error",
+				Data:    []DataResponse{},
+			})
+		} else {
+			for _, i := range users {
+				if i.Email == data.Email {
+					ctx.JSON(http.StatusBadRequest, Response{
+						Success: false,
+						Message: "bad request",
+						Error:   "email already registered",
+					})
+					return
+				}
+			}
+			id++
+			data.Id = id
+			users = append(users, data)
+			ctx.JSON(http.StatusCreated, Response{
+				Success: true,
+				Message: "success create user",
+				Data:    users,
+			})
+		}
+	})
+
 	r.GET("/users", func(ctx *gin.Context) {
 		if len(users) == 0 {
 			ctx.JSON(http.StatusNotFound, Response{
@@ -55,6 +88,17 @@ func main() {
 		idParam := ctx.Param("id")
 
 		id, err := strconv.Atoi(idParam)
+		ctx.JSON(http.StatusOK, Response{
+			Success: true,
+			Message: "success get user data",
+			Data:    users,
+		})
+	})
+
+	r.GET("/users/:id", func(ctx *gin.Context) {
+		idParam := ctx.Param("id")
+		id, err := strconv.Atoi(idParam)
+
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, Response{
 				Success: false,
@@ -69,6 +113,11 @@ func main() {
 				ctx.JSON(http.StatusOK, Response{
 					Success: true,
 					Message: "user found",
+		for _, u := range users {
+			if u.Id == id {
+				ctx.JSON(http.StatusOK, Response{
+					Success: true,
+					Message: "user found, id:" + " " + strconv.Itoa(u.Id),
 					Data:    []DataResponse{u},
 				})
 				return
@@ -299,4 +348,5 @@ func main() {
 	})
 
 	r.Run("localhost:8888")
+	})
 }

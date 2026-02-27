@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 module backend-demo
+=======
+module latihan
+>>>>>>> 3a67f4a (save local changes)
 
 go 1.25.3
 
