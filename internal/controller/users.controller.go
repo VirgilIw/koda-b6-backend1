@@ -97,7 +97,7 @@ func GetUserByID(ctx *gin.Context) {
 	if data.ID == 0 {
 		ctx.JSON(http.StatusNotFound, dto.Response{
 			Success: false,
-			Message: "All user data",
+			Message: "data not found",
 			Data:    []dto.UserResponse{},
 		})
 		return
