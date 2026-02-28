@@ -75,19 +75,16 @@ func GetUsers(ctx *gin.Context) {
 		Data:    result,
 	})
 }
-
 func GetUserByID(ctx *gin.Context) {
 
 	idParam := ctx.Param("id")
 
 	id, err := strconv.Atoi(idParam)
-
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, dto.Response{
 			Success: false,
 			Message: "bad request",
 			Error:   err.Error(),
-			Data:    []dto.UserResponse{},
 		})
 		return
 	}
@@ -98,10 +95,10 @@ func GetUserByID(ctx *gin.Context) {
 		ctx.JSON(http.StatusNotFound, dto.Response{
 			Success: false,
 			Message: "data not found",
-			Data:    []dto.UserResponse{},
 		})
 		return
 	}
+
 	ctx.JSON(http.StatusOK, dto.Response{
 		Success: true,
 		Message: "user found",
@@ -112,4 +109,42 @@ func GetUserByID(ctx *gin.Context) {
 			},
 		},
 	})
+}
+
+func UpdateUser(ctx *gin.Context) {
+	idParam := ctx.Param("id")
+	id, err := strconv.Atoi(idParam)
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, dto.Response{
+			Success: false,
+			Message: "bad request",
+			Error:   err.Error(),
+		})
+		return
+	}
+	var req dto.UpdateUserRequest
+
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, dto.Response{
+			Success: false,
+			Message: "bad request",
+			Error:   err.Error(),
+			Data:    []dto.UserResponse{},
+		})
+	}
+
+	data, err := service.UpdateUser(id, req)
+
+	ctx.JSON(http.StatusOK, dto.Response{
+		Success: true,
+		Message: "update data success",
+		Data: []dto.UserResponse{
+			{
+				ID:    data.ID,
+				Email: data.Email,
+			},
+		},
+	})
+
 }

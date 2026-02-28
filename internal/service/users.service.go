@@ -2,51 +2,92 @@ package service
 
 import (
 	"errors"
+	"koda-b6-backend1/internal/dto"
 	"koda-b6-backend1/internal/model"
+	"koda-b6-backend1/internal/repository"
 
 	"github.com/matthewhartstonge/argon2"
 )
 
 var argon = argon2.DefaultConfig()
 
-var users []model.User // sumber data
-var lastID int
-
-func CreateUser(user model.User) (model.User, error) {
+func CreateUser(user model.User) (dto.UserResponse, error) {
 
 	if len(user.Password) < 8 {
-		return model.User{}, errors.New("password must be at least 8 characters")
+		return dto.UserResponse{}, errors.New("password must be at least 8 characters")
 	}
+
+	users := repository.FindAll()
 
 	for _, u := range users {
 		if u.Email == user.Email {
-			return model.User{}, errors.New("email already registered")
+			return dto.UserResponse{}, errors.New("email already registered")
 		}
 	}
 
-	encoded, err := argon.HashEncoded([]byte(user.Password))
+	hash, err := argon.HashEncoded([]byte(user.Password))
 	if err != nil {
-		return model.User{}, err
+		return dto.UserResponse{}, err
 	}
 
-	lastID++
-	user.ID = lastID
-	user.Password = string(encoded)
+	user.Password = string(hash)
 
-	users = append(users, user)
+	data := repository.Create(user)
 
-	return user, nil
+	return dto.UserResponse{
+		ID:       data.ID,
+		Email:    data.Email,
+		Password: data.Password,
+	}, nil
 }
 
-func GetUsers() []model.User {
-	return users
-}
+func GetUsers() []dto.UserResponse {
 
-func GetUserByID(id int) model.User {
-	for _, v := range users {
-		if v.ID == id {
-			return v
-		}
+	users := repository.FindAll()
+
+	var result []dto.UserResponse
+
+	for _, u := range users {
+		result = append(result, dto.UserResponse{
+			ID:    u.ID,
+			Email: u.Email,
+		})
 	}
-	return model.User{}
+
+	return result
+}
+
+func GetUserByID(id int) dto.UserResponse {
+	user := repository.FindByID(id)
+
+	return dto.UserResponse{
+		ID:    user.ID,
+		Email: user.Email,
+	}
+}
+
+func UpdateUser(id int, req dto.UpdateUserRequest) (dto.UserResponse, error) {
+	data := repository.FindByID(id)
+
+	if req.Email == "" {
+		return dto.UserResponse{}, errors.New("email cannot be empty")
+	}
+
+	if len(req.Password) < 8 {
+		return dto.UserResponse{}, errors.New("password must be at least 8 characters")
+	}
+	encoded, err := argon.HashEncoded([]byte(req.Password))
+
+	if err != nil {
+		return dto.UserResponse{}, err
+	}
+
+	data.Email = req.Email // isi nya diganti
+	data.Password = string(encoded)
+
+	repository.Update(data)
+	return dto.UserResponse{
+		ID:    data.ID,
+		Email: data.Email,
+	}, nil
 }
