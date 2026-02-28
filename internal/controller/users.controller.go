@@ -1,44 +1,21 @@
 package controller
 
 import (
+	"koda-b6-backend1/internal/dto"
+	"koda-b6-backend1/internal/model"
+	"koda-b6-backend1/internal/service"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/matthewhartstonge/argon2"
 )
 
-var argon = argon2.DefaultConfig()
-
-type User struct {
-	ID       int
-	Email    string
-	Password string
-}
-
-type CreateUserResponse struct {
-	ID       int    `json:"id"`
-	Email    string `json:"email"`
-	Password string `json:"password,omitempty"`
-}
-
-type Response struct {
-	Success bool                 `json:"success"`
-	Message string               `json:"message"`
-	Error   string               `json:"error,omitempty"`
-	Data    []CreateUserResponse `json:"data,omitempty"`
-}
-
-var users []User
-var lastID int
-
-// Controller pakai *gin.Context → untuk menangani request
-// CREATE USER
 func CreateUser(ctx *gin.Context) {
 
-	var user User
+	var user model.User
 
 	if err := ctx.ShouldBindJSON(&user); err != nil {
-		ctx.JSON(http.StatusBadRequest, Response{
+		ctx.JSON(http.StatusBadRequest, dto.Response{
 			Success: false,
 			Message: "bad request",
 			Error:   err.Error(),
@@ -46,82 +23,93 @@ func CreateUser(ctx *gin.Context) {
 		return
 	}
 
-	if len(user.Password) < 8 {
-		ctx.JSON(http.StatusBadRequest, Response{
-			Success: false,
-			Message: "bad request",
-			Error:   "password must be at least 8 characters",
-		})
-		return
-	}
+	data, err := service.CreateUser(user)
 
-	for _, u := range users {
-		if u.Email == user.Email {
-			ctx.JSON(http.StatusBadRequest, Response{
-				Success: false,
-				Message: "email already registered",
-			})
-			return
-		}
-	}
-
-	encoded, err := argon.HashEncoded([]byte(user.Password))
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, Response{
+		ctx.JSON(http.StatusBadRequest, dto.Response{
 			Success: false,
-			Message: "failed hash password",
+			Message: "failed create user",
 			Error:   err.Error(),
 		})
 		return
 	}
 
-	lastID++
-	user.ID = lastID
-	user.Password = string(encoded)
-
-	users = append(users, user)
-
-	ctx.JSON(http.StatusCreated, Response{
+	ctx.JSON(http.StatusCreated, dto.Response{
 		Success: true,
 		Message: "create user success",
-		Data: []CreateUserResponse{
+		Data: []dto.UserResponse{
 			{
-				ID:       user.ID,
-				Email:    user.Email,
-				Password: user.Password,
+				ID:       data.ID,
+				Email:    data.Email,
+				Password: data.Password,
 			},
 		},
 	})
 }
 
-// GET ALL USERS
 func GetUsers(ctx *gin.Context) {
-	data := users
+
+	data := service.GetUsers()
+
 	if len(data) == 0 {
-		ctx.JSON(http.StatusOK, Response{
+		ctx.JSON(http.StatusOK, dto.Response{
 			Success: true,
 			Message: "no users",
-			Data:    []CreateUserResponse{},
+			Data:    []dto.UserResponse{},
 		})
 		return
 	}
 
-	var user []CreateUserResponse
+	var result []dto.UserResponse
+
 	for _, dt := range data {
-		user = append(user, CreateUserResponse{
+		result = append(result, dto.UserResponse{
 			ID:    dt.ID,
 			Email: dt.Email,
 		})
 	}
 
-	ctx.JSON(http.StatusOK, Response{
+	ctx.JSON(http.StatusOK, dto.Response{
 		Success: true,
 		Message: "all users data",
-		Data:    user,
+		Data:    result,
 	})
 }
 
-// GET USER BY ID
 func GetUserByID(ctx *gin.Context) {
 
+	idParam := ctx.Param("id")
+
+	id, err := strconv.Atoi(idParam)
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, dto.Response{
+			Success: false,
+			Message: "bad request",
+			Error:   err.Error(),
+			Data:    []dto.UserResponse{},
+		})
+		return
+	}
+
+	data := service.GetUserByID(id)
+
+	if data.ID == 0 {
+		ctx.JSON(http.StatusNotFound, dto.Response{
+			Success: false,
+			Message: "All user data",
+			Data:    []dto.UserResponse{},
+		})
+		return
+	}
+	ctx.JSON(http.StatusOK, dto.Response{
+		Success: true,
+		Message: "user found",
+		Data: []dto.UserResponse{
+			{
+				ID:    data.ID,
+				Email: data.Email,
+			},
+		},
+	})
 }
