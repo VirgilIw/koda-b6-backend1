@@ -35,3 +35,5 @@ func Update(user model.User) {
 		}
 	}
 }
+
+func Delete() {}
