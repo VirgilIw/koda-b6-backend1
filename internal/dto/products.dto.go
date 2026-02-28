@@ -1,0 +1,19 @@
+package dto
+
+type ProductResponse struct {
+	Id          int     `json:"id"`
+	Name        string  `json:"name"`
+	Description string  `json:"description"`
+	Rating      float64 `json:"rating"`
+	Stock       int     `json:"stock"`
+	Images      string  `json:"images"`
+}
+
+type ProductRequest struct {
+	Id          int     `json:"id"`
+	Name        string  `json:"name"`
+	Description string  `json:"description"`
+	Rating      float64 `json:"rating"`
+	Stock       int     `json:"stock"`
+	Images      string  `json:"images"`
+}
