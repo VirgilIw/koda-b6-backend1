@@ -31,6 +31,7 @@ type Response struct {
 var users []User
 var lastID int
 
+// Controller pakai *gin.Context → untuk menangani request
 // CREATE USER
 func CreateUser(ctx *gin.Context) {
 
