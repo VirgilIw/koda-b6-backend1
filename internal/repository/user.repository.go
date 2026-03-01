@@ -1,6 +1,9 @@
 package repository
 
-import "koda-b6-backend1/internal/model"
+import (
+	"errors"
+	"koda-b6-backend1/internal/model"
+)
 
 var users []model.User
 var lastID int
@@ -36,4 +39,24 @@ func Update(user model.User) {
 	}
 }
 
-func Delete() {}
+func DeleteUserById(id int) error {
+
+	var newUsers []model.User
+	found := false
+
+	for _, u := range users {
+		if u.ID == id {
+			found = true
+			continue
+		}
+
+		newUsers = append(newUsers, u)
+	}
+
+	if !found {
+		return errors.New("user not found")
+	}
+
+	users = newUsers
+	return nil
+}

@@ -148,3 +148,36 @@ func UpdateUser(ctx *gin.Context) {
 	})
 
 }
+
+func DeleteUserById(ctx *gin.Context) {
+
+	idParam := ctx.Param("id")
+
+	id, err := strconv.Atoi(idParam)
+	if err != nil || id <= 0 {
+		ctx.JSON(http.StatusBadRequest, dto.Response{
+			Success: false,
+			Message: "bad request",
+			Error:   "invalid user id",
+			Data:    []dto.UserResponse{},
+		})
+		return
+	}
+
+	err = service.DeleteUserById(id)
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, dto.Response{
+			Success: false,
+			Message: "user not found",
+			Error:   err.Error(),
+			Data:    []dto.UserResponse{},
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, dto.Response{
+		Success: true,
+		Message: "success delete user",
+		Data:    []dto.UserResponse{},
+	})
+}

@@ -91,3 +91,7 @@ func UpdateUser(id int, req dto.UpdateUserRequest) (dto.UserResponse, error) {
 		Email: data.Email,
 	}, nil
 }
+
+func DeleteUserById(id int) error {
+	return repository.DeleteUserById(id)
+}
