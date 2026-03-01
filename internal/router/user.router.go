@@ -15,4 +15,5 @@ func UserRoutes(r *gin.Engine) {
 	users.GET("", controller.GetUsers)
 	users.GET("/:id", controller.GetUserByID)
 	users.PATCH("/:id", controller.UpdateUser)
+	users.DELETE("/:id", controller.DeleteUserById)
 }
