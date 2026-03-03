@@ -1,6 +1,11 @@
 GET /users HTTP/1.1
 Host: localhost:8888;
 
+###
+GET /users/1 HTTP/1.1
+Host: localhost:8888;
+
+###
 POST /users HTTP/1.1
 Host: localhost:8888
 Content-Type: application/json
@@ -9,3 +14,13 @@ Content-Type: application/json
   "email": "test@mail.com",
   "password": "123456"
 }
+###
+PATCH /users/1 HTTP/1.1
+Host: localhost:8888
+{
+    	"fullname": "gilamb",
+		"email":    "test1@gmail.com",
+}
+###
+DELETE /users/1 HTTP/1.1
+Host: localhost:8888
