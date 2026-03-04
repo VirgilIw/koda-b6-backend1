@@ -69,8 +69,8 @@ definitions:
 host: localhost:8888
 info:
   contact: {}
-  description: Minitask koda-b6
-  title: Koda-B6-Backend1
+  description: API documentation
+  title: Koda API
   version: "1.0"
 paths:
   /products:
@@ -89,7 +89,7 @@ paths:
             $ref: '#/definitions/dto.ResponseProduct'
       summary: Get all products
       tags:
-      - products
+      - Products
     post:
       consumes:
       - application/json
@@ -118,7 +118,7 @@ paths:
             $ref: '#/definitions/dto.ResponseProduct'
       summary: Create a product
       tags:
-      - products
+      - Products
   /products/{id}:
     delete:
       consumes:
@@ -147,7 +147,7 @@ paths:
             $ref: '#/definitions/dto.ResponseProduct'
       summary: Delete a product
       tags:
-      - products
+      - Products
     get:
       description: Get Product By Id
       parameters:
@@ -177,7 +177,7 @@ paths:
             $ref: '#/definitions/dto.ResponseProduct'
       summary: Get Product By Id
       tags:
-      - products
+      - Products
     patch:
       consumes:
       - application/json
@@ -215,7 +215,7 @@ paths:
             $ref: '#/definitions/dto.ResponseProduct'
       summary: Edit Product By Id
       tags:
-      - products
+      - Products
   /users:
     get:
       description: Get users
@@ -361,4 +361,11 @@ paths:
       summary: Update user By Id
       tags:
       - Users
+securityDefinitions:
+  BearerAuth:
+    description: 'Type "Bearer" followed by a space and JWT token. Example: "Bearer
+      eyJhbGciO..."'
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

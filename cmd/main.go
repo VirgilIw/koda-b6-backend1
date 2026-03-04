@@ -10,11 +10,16 @@ import (
 	"github.com/joho/godotenv"
 )
 
-// @title Koda-B6-Backend1
-// @version         1.0
-// @description     Minitask koda-b6
-// @host      localhost:8888
-// @BasePath  /
+// @title Koda API
+// @version 1.0
+// @description API documentation
+// @host localhost:8888
+// @BasePath /
+
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Type "Bearer" followed by a space and JWT token. Example: "Bearer eyJhbGciO..."
 func main() {
 
 	r := gin.Default()

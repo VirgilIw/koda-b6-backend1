@@ -14,7 +14,7 @@ import (
 // CreateProduct godoc
 // @Summary      Create a product
 // @Description  Create new product
-// @Tags         products
+// @Tags         Products
 // @Accept       json
 // @Produce      json
 // @Param        product body dto.ProductRequest true "Create product"
@@ -56,11 +56,13 @@ func CreateProduct(ctx *gin.Context) {
 // GetAllProduct godoc
 // @Summary      Get all products
 // @Description  Get all products
-// @Tags         products
+// @Tags         Products
 // @Produce      json
 // @Success      200  {object}  dto.ResponseProduct
 // @Failure      500  {object}  dto.ResponseProduct
 // @Router       /products [get]
+//
+//	@Security		BearerAuth
 func GetAllProduct(ctx *gin.Context) {
 	data := service.GetAllProduct()
 	if len(data) == 0 {
@@ -82,7 +84,7 @@ func GetAllProduct(ctx *gin.Context) {
 // GetProductById godoc
 // @Summary      Get Product By Id
 // @Description  Get Product By Id
-// @Tags         products
+// @Tags         Products
 // @Produce      json
 // @Param        id   path   int   true   "Product ID"
 // @Success      200  {object}  dto.ResponseProduct
@@ -126,7 +128,7 @@ func GetProductById(ctx *gin.Context) {
 // EditProductById godoc
 // @Summary      Edit Product By Id
 // @Description  Update product by ID
-// @Tags         products
+// @Tags         Products
 // @Accept       json
 // @Produce      json
 // @Param        id path int true "Product ID"
@@ -184,7 +186,7 @@ func EditProductById(ctx *gin.Context) {
 // DeleteProduct godoc
 // @Summary      Delete a product
 // @Description  Delete a product
-// @Tags         products
+// @Tags         Products
 // @Accept       json
 // @Produce      json
 // @Param        id path int true "Delete product"
