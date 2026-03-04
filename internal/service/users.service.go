@@ -35,7 +35,6 @@ func CreateUser(user model.User) (dto.UserResponse, error) {
 	data := repository.Create(user)
 
 	return dto.UserResponse{
-		ID:       data.ID,
 		Email:    data.Email,
 		Password: data.Password,
 	}, nil
@@ -49,7 +48,6 @@ func GetUsers() []dto.UserResponse {
 
 	for _, u := range users {
 		result = append(result, dto.UserResponse{
-			ID:    u.ID,
 			Email: u.Email,
 		})
 	}
@@ -61,7 +59,6 @@ func GetUserByID(id int) dto.UserResponse {
 	user := repository.FindByID(id)
 
 	return dto.UserResponse{
-		ID:    user.ID,
 		Email: user.Email,
 	}
 }
@@ -87,7 +84,6 @@ func UpdateUser(id int, req dto.UpdateUserRequest) (dto.UserResponse, error) {
 
 	repository.Update(data)
 	return dto.UserResponse{
-		ID:    data.ID,
 		Email: data.Email,
 	}, nil
 }

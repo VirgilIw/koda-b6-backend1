@@ -10,6 +10,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// CreateUser godoc
+// @Summary      Create a user
+// @Description  Create new user
+// @Tags         Users
+// @Accept       json
+// @Produce      json
+// @Param        user body model.User true "Create user"
+// @Success      201  {object}  dto.UserResponse
+// @Failure      400  {object}  dto.UserResponse
+// @Failure      500  {object}  dto.UserResponse
+// @Router       /users [post]
 func CreateUser(ctx *gin.Context) {
 
 	var user model.User
@@ -39,7 +50,6 @@ func CreateUser(ctx *gin.Context) {
 		Message: "create user success",
 		Data: []dto.UserResponse{
 			{
-				ID:       data.ID,
 				Email:    data.Email,
 				Password: data.Password,
 			},
@@ -47,6 +57,15 @@ func CreateUser(ctx *gin.Context) {
 	})
 }
 
+// GetUsers godoc
+// @Summary      Get users
+// @Description  Get users
+// @Tags         Users
+// @Produce      json
+// @Success      200  {object}  dto.UserResponse
+// @Failure      400  {object}  dto.UserResponse
+// @Failure      500  {object}  dto.UserResponse
+// @Router       /users [get]
 func GetUsers(ctx *gin.Context) {
 
 	data := service.GetUsers()
@@ -64,7 +83,6 @@ func GetUsers(ctx *gin.Context) {
 
 	for _, dt := range data {
 		result = append(result, dto.UserResponse{
-			ID:    dt.ID,
 			Email: dt.Email,
 		})
 	}
@@ -75,6 +93,17 @@ func GetUsers(ctx *gin.Context) {
 		Data:    result,
 	})
 }
+
+// GetUsersById godoc
+// @Summary      Get users
+// @Description  Get users
+// @Tags         Users
+// @Produce      json
+// @Param        id   path   int   true   "User ID"
+// @Success      200  {object}  dto.UserResponse
+// @Failure      400  {object}  dto.UserResponse
+// @Failure      500  {object}  dto.UserResponse
+// @Router       /users/{id} [get]
 func GetUserByID(ctx *gin.Context) {
 
 	idParam := ctx.Param("id")
@@ -91,26 +120,30 @@ func GetUserByID(ctx *gin.Context) {
 
 	data := service.GetUserByID(id)
 
-	if data.ID == 0 {
-		ctx.JSON(http.StatusNotFound, dto.Response{
-			Success: false,
-			Message: "data not found",
-		})
-		return
-	}
-
 	ctx.JSON(http.StatusOK, dto.Response{
 		Success: true,
 		Message: "user found",
 		Data: []dto.UserResponse{
 			{
-				ID:    data.ID,
 				Email: data.Email,
 			},
 		},
 	})
 }
 
+// UpdateUser godoc
+// @Summary      Update user By Id
+// @Description  Update user by ID
+// @Tags         Users
+// @Accept       json
+// @Produce      json
+// @Param        id path int true "User ID"
+// @Param        user body dto.UpdateUserRequest true "User data"
+// @Success      200  {object}  dto.UserResponse
+// @Failure      400  {object}  dto.UserResponse
+// @Failure      404  {object}  dto.UserResponse
+// @Failure      500  {object}  dto.UserResponse
+// @Router       /users/{id} [patch]
 func UpdateUser(ctx *gin.Context) {
 	idParam := ctx.Param("id")
 	id, err := strconv.Atoi(idParam)
@@ -141,7 +174,6 @@ func UpdateUser(ctx *gin.Context) {
 		Message: "update data success",
 		Data: []dto.UserResponse{
 			{
-				ID:    data.ID,
 				Email: data.Email,
 			},
 		},
@@ -149,6 +181,17 @@ func UpdateUser(ctx *gin.Context) {
 
 }
 
+// DeleteUser godoc
+// @Summary      Delete user By Id
+// @Description  Delete user by ID
+// @Tags         Users
+// @Produce      json
+// @Param        id path int true "Delete User ID"
+// @Success      200  {object}  dto.UserResponse
+// @Failure      400  {object}  dto.UserResponse
+// @Failure      404  {object}  dto.UserResponse
+// @Failure      500  {object}  dto.UserResponse
+// @Router       /users/{id} [delete]
 func DeleteUserById(ctx *gin.Context) {
 
 	idParam := ctx.Param("id")
