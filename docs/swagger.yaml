@@ -69,7 +69,7 @@ definitions:
 host: localhost:8888
 info:
   contact: {}
-  description: API documentation
+  description: Minitask Backend-1 documentation
   title: Koda API
   version: "1.0"
 paths:
@@ -87,6 +87,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/dto.ResponseProduct'
+      security:
+      - BearerAuth: []
       summary: Get all products
       tags:
       - Products

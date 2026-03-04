@@ -1,7 +1,7 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "API documentation",
+        "description": "Minitask Backend-1 documentation",
         "title": "Koda API",
         "contact": {},
         "version": "1.0"
@@ -11,6 +11,11 @@
     "paths": {
         "/products": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Get all products",
                 "produces": [
                     "application/json"

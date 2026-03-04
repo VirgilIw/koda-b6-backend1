@@ -17,6 +17,11 @@ const docTemplate = `{
     "paths": {
         "/products": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Get all products",
                 "produces": [
                     "application/json"
@@ -572,7 +577,7 @@ var SwaggerInfo = &swag.Spec{
 	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "Koda API",
-	Description:      "API documentation",
+	Description:      "Minitask Backend-1 documentation",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

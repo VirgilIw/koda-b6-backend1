@@ -12,7 +12,7 @@ import (
 
 // @title Koda API
 // @version 1.0
-// @description API documentation
+// @description Minitask Backend-1 documentation
 // @host localhost:8888
 // @BasePath /
 
