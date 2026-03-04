@@ -1,0 +1,196 @@
+basePath: /
+definitions:
+  dto.ProductRequest:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      images:
+        type: string
+      name:
+        type: string
+      rating:
+        type: number
+      stock:
+        type: integer
+    type: object
+  dto.ProductResponse:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      images:
+        type: string
+      name:
+        type: string
+      rating:
+        type: number
+      stock:
+        type: integer
+    type: object
+  dto.ResponseProduct:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/dto.ProductResponse'
+        type: array
+      error:
+        type: string
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+host: localhost:8888
+info:
+  contact: {}
+  description: Minitask koda-b6
+  title: Koda-B6-Backend1
+  version: "1.0"
+paths:
+  /products:
+    get:
+      description: Get all products
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ResponseProduct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ResponseProduct'
+      summary: Get all products
+      tags:
+      - products
+    post:
+      consumes:
+      - application/json
+      description: Create new product
+      parameters:
+      - description: Create product
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ProductRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.ResponseProduct'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ResponseProduct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ResponseProduct'
+      summary: Create a product
+      tags:
+      - products
+  /products/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a product
+      parameters:
+      - description: Delete product
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ResponseProduct'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ResponseProduct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ResponseProduct'
+      summary: Delete a product
+      tags:
+      - products
+    get:
+      description: Get Product By Id
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ResponseProduct'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ResponseProduct'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ResponseProduct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ResponseProduct'
+      summary: Get Product By Id
+      tags:
+      - products
+    patch:
+      consumes:
+      - application/json
+      description: Update product by ID
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Product data
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ProductRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ResponseProduct'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ResponseProduct'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ResponseProduct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ResponseProduct'
+      summary: Edit Product By Id
+      tags:
+      - products
+swagger: "2.0"

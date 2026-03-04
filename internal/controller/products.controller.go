@@ -9,6 +9,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// @Accept dipakai kalau request body ada.
+
+// CreateProduct godoc
+// @Summary      Create a product
+// @Description  Create new product
+// @Tags         products
+// @Accept       json
+// @Produce      json
+// @Param        product body dto.ProductRequest true "Create product"
+// @Success      201  {object}  dto.ResponseProduct
+// @Failure      400  {object}  dto.ResponseProduct
+// @Failure      500  {object}  dto.ResponseProduct
+// @Router       /products [post]
 func CreateProduct(ctx *gin.Context) {
 	var req dto.ProductRequest
 
@@ -40,6 +53,14 @@ func CreateProduct(ctx *gin.Context) {
 	})
 }
 
+// GetAllProduct godoc
+// @Summary      Get all products
+// @Description  Get all products
+// @Tags         products
+// @Produce      json
+// @Success      200  {object}  dto.ResponseProduct
+// @Failure      500  {object}  dto.ResponseProduct
+// @Router       /products [get]
 func GetAllProduct(ctx *gin.Context) {
 	data := service.GetAllProduct()
 	if len(data) == 0 {
@@ -58,6 +79,17 @@ func GetAllProduct(ctx *gin.Context) {
 	})
 }
 
+// GetProductById godoc
+// @Summary      Get Product By Id
+// @Description  Get Product By Id
+// @Tags         products
+// @Produce      json
+// @Param        id   path   int   true   "Product ID"
+// @Success      200  {object}  dto.ResponseProduct
+// @Failure      400  {object}  dto.ResponseProduct
+// @Failure      404  {object}  dto.ResponseProduct
+// @Failure      500  {object}  dto.ResponseProduct
+// @Router       /products/{id} [get]
 func GetProductById(ctx *gin.Context) {
 	idParam := ctx.Param("id")
 
@@ -91,6 +123,19 @@ func GetProductById(ctx *gin.Context) {
 	})
 }
 
+// EditProductById godoc
+// @Summary      Edit Product By Id
+// @Description  Update product by ID
+// @Tags         products
+// @Accept       json
+// @Produce      json
+// @Param        id path int true "Product ID"
+// @Param        product body dto.ProductRequest true "Product data"
+// @Success      200  {object}  dto.ResponseProduct
+// @Failure      400  {object}  dto.ResponseProduct
+// @Failure      404  {object}  dto.ResponseProduct
+// @Failure      500  {object}  dto.ResponseProduct
+// @Router       /products/{id} [patch]
 func EditProductById(ctx *gin.Context) {
 
 	idParam := ctx.Param("id")
@@ -136,6 +181,17 @@ func EditProductById(ctx *gin.Context) {
 	})
 }
 
+// DeleteProduct godoc
+// @Summary      Delete a product
+// @Description  Delete a product
+// @Tags         products
+// @Accept       json
+// @Produce      json
+// @Param        id path int true "Delete product"
+// @Success      200  {object}  dto.ResponseProduct
+// @Failure      400  {object}  dto.ResponseProduct
+// @Failure      500  {object}  dto.ResponseProduct
+// @Router       /products/{id} [delete]
 func DeleteProductById(ctx *gin.Context) {
 	idParam := ctx.Param("id")
 
